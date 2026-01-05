@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info X 聯繫車主系統</title>
+    <style>
+        :root {
+            --bg-dark: #020b18;
+            --info-blue: #00d2ff;
+            --card-bg: #f0f4f7;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", sans-serif;
+            background: linear-gradient(180deg, #04152d 0%, #000000 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 設定介面 - 僅供輸入資料用 */
+        #config-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        /* 主要展示介面 */
+        .container {
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 15px var(--info-blue);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-x {
+            border: 3px solid white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 0 15px var(--info-blue);
+        }
+
+        .privacy-hint {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .privacy-hint span {
+            color: #fff;
+            display: block;
+        }
+
+        /* 白色區塊 */
+        .contact-card {
+            background-color: var(--card-bg);
+            border-radius: 40px;
+            padding: 40px 20px;
+            margin: 0 20px;
+            color: #333;
+        }
+
+        .contact-card h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .plate-box {
+            border: 2px solid #333;
+            display: inline-block;
+            padding: 10px 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .parking-msg {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* 滑動按鈕 */
+        .slider-container {
+            width: 85%;
+            height: 70px;
+            background-color: #dbe4eb;
+            border-radius: 35px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none;
+        }
+
+        .slider-handle {
+            width: 60px;
+            height: 60px;
+            background-color: #1a1a1a;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: absolute;
+            left: 5px;
+            transition: transform 0.1s;
+            z-index: 2;
+        }
+
+        .slider-handle i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .slider-text {
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #2c3e50;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .arrow-indicator {
+            color: var(--info-blue);
+            font-weight: bold;
+        }
+
+        /* 電話圖標 */
+        .phone-icon {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 設定區域 (實際使用時可隱藏) -->
+    <div id="config-panel">
+        <h3>後台設定 (模擬)</h3>
+        <div class="input-group">
+            <label>車牌號碼：</label>
+            <input type="text" id="input-plate" value="3883-J9" oninput="updateDisplay()">
+        </div>
+        <div class="input-group">
+            <label>車主電話：</label>
+            <input type="tel" id="input-phone" value="0912345678">
+        </div>
+        <p style="font-size: 12px;">* 設定後，下方顯示將即時更新。滑動下方黑色按鈕模擬撥號。</p>
+    </div>
+
+    <div class="container">
+        <!-- Logo 區 -->
+        <div class="logo">
+            Info <span class="logo-x">X</span>
+        </div>
+
+        <div class="privacy-hint">
+            本系統採「隱私通話」<br>
+            <span>對方不會知道您的號碼</span>
+        </div>
+
+        <!-- 聯絡卡片區 -->
+        <div class="contact-card">
+            <h2>聯繫車主</h2>
+            
+            <div class="plate-box" id="display-plate">
+                3883-J9
+            </div>
+
+            <p class="parking-msg">臨時停車，很抱歉給您帶來不便。</p>
+
+            <!-- 滑動撥打 -->
+            <div class="slider-container" id="sliderContainer">
+                <div class="slider-handle" id="sliderHandle">
+                    <svg class="phone-icon" viewBox="0 0 24 24">
+                        <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" />
+                    </svg>
+                </div>
+                <div class="slider-text">
+                    <span class="arrow-indicator">>>></span>
+                    <span>向右滑動<br>撥打電話</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const handle = document.getElementById('sliderHandle');
+        const container = document.getElementById('sliderContainer');
+        const inputPlate = document.getElementById('input-plate');
+        const inputPhone = document.getElementById('input-phone');
+        const displayPlate = document.getElementById('display-plate');
+
+        let isDragging = false;
+        let startX = 0;
+        let maxScroll = container.offsetWidth - handle.offsetWidth - 10;
+
+        // 更新頁面顯示車牌
+        function updateDisplay() {
+            displayPlate.innerText = inputPlate.value;
+        }
+
+        // 滑動邏輯
+        function startDrag(e) {
+            isDragging = true;
+            startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+            handle.style.transition = 'none';
+        }
+
+        function moveDrag(e) {
+            if (!isDragging) return;
+            
+            const currentX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+            let moveX = currentX - startX;
+
+            if (moveX < 0) moveX = 0;
+            if (moveX > maxScroll) moveX = maxScroll;
+
+            handle.style.transform = `translateX(${moveX}px)`;
+
+            // 如果滑動超過 90%，觸發撥號
+            if (moveX >= maxScroll * 0.9) {
+                triggerCall();
+            }
+        }
+
+        function stopDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // 如果沒滑到底，彈回原位
+            if (parseInt(handle.style.transform.replace('translateX(', '')) < maxScroll * 0.9) {
+                handle.style.transition = 'transform 0.3s ease';
+                handle.style.transform = 'translateX(0px)';
+            }
+        }
+
+        function triggerCall() {
+            const phone = inputPhone.value;
+            if (phone) {
+                window.location.href = `tel:${phone}`;
+            } else {
+                alert("未設定電話號碼");
+            }
+            // 重置滑塊
+            setTimeout(() => {
+                handle.style.transition = 'transform 0.3s ease';
+                handle.style.transform = 'translateX(0px)';
+            }, 500);
+        }
+
+        // 事件監聽 (滑鼠)
+        handle.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', moveDrag);
+        window.addEventListener('mouseup', stopDrag);
+
+        // 事件監聽 (手機觸控)
+        handle.addEventListener('touchstart', startDrag);
+        window.addEventListener('touchmove', moveDrag);
+        window.addEventListener('touchend', stopDrag);
+
+        // 監控視窗大小變化以重新計算滑動距離
+        window.addEventListener('resize', () => {
+            maxScroll = container.offsetWidth - handle.offsetWidth - 10;
+        });
+    </script>
+</body>
+</html>
