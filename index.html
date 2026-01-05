@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聯繫車主</title>
+    <style>
+        :root {
+            --bg-color: #050a14;
+            --card-bg: #e9eff2;
+            --accent-blue: #00d2ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 30%, #102a43 0%, #050a14 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* 頂部車主名稱 (替換原本的 LOGO) */
+        .owner-name {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 15px var(--accent-blue), 0 0 30px var(--accent-blue);
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .subtitle span {
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        /* 白色卡片區域 */
+        .card {
+            background-color: var(--card-bg);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 40px;
+            padding: 40px 20px;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .plate-box {
+            border: 2px solid #333;
+            display: inline-block;
+            padding: 10px 30px;
+            font-size: 42px;
+            font-weight: 800;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            background: white;
+        }
+
+        .apology-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* 滑桿設計 */
+        .slider-container {
+            position: relative;
+            width: 280px;
+            height: 80px;
+            background-color: #d1d9e0;
+            border-radius: 40px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .slider-text {
+            width: 100%;
+            text-align: right;
+            padding-right: 20px;
+            font-size: 18px;
+            color: #444;
+            font-weight: bold;
+            pointer-events: none;
+            line-height: 1.2;
+        }
+
+        .slider-handle {
+            position: absolute;
+            left: 10px;
+            width: 65px;
+            height: 65px;
+            background: #222;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .slider-handle i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .arrow-hint {
+            color: #00d2ff;
+            margin-right: 5px;
+        }
+
+        /* 設定按鈕 */
+        .settings-link {
+            position: fixed;
+            bottom: 20px;
+            color: rgba(255,255,255,0.3);
+            text-decoration: none;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="owner-name" id="display-name">陳先生</div>
+    
+    <div class="subtitle">
+        本系統採「隱私通話」<br>
+        對方不會知道您的號碼
+    </div>
+
+    <div class="card">
+        <div class="card-title">聯繫車主</div>
+        <div class="plate-box" id="display-plate">BZP-3757</div>
+        <div class="apology-text">臨時停車，很抱歉給您帶來不便。</div>
+
+        <div class="slider-container" id="slider-track">
+            <div class="slider-handle" id="slider-handle">
+                <!-- 電話圖示 -->
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                    <path d="M6.62 10.79c1.44 2.82 3.76 5.14 6.62 6.62l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+            </div>
+            <div class="slider-text">
+                <span class="arrow-hint">>>></span> 向右滑動<br>撥打電話
+            </div>
+        </div>
+    </div>
+
+    <a href="settings.html" class="settings-link">設定頁面</a>
+
+    <script>
+        // 載入資料
+        const name = localStorage.getItem('ownerName') || '陳先生';
+        const plate = localStorage.getItem('ownerPlate') || 'BZP-3757';
+        const phone = localStorage.getItem('ownerPhone') || '0922896785';
+
+        document.getElementById('display-name').textContent = name;
+        document.getElementById('display-plate').textContent = plate;
+
+        // 滑桿邏輯
+        const handle = document.getElementById('slider-handle');
+        const track = document.getElementById('slider-track');
+        let isDragging = false;
+        let startX = 0;
+        const maxSlide = track.offsetWidth - handle.offsetWidth - 20;
+
+        function startDrag(e) {
+            isDragging = true;
+            startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+            handle.style.transition = 'none';
+        }
+
+        function moveDrag(e) {
+            if (!isDragging) return;
+            const currentX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+            let move = currentX - startX;
+            if (move < 0) move = 0;
+            if (move > maxSlide) move = maxSlide;
+            handle.style.transform = `translateX(${move}px)`;
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            const currentMatrix = new WebKitCSSMatrix(window.getComputedStyle(handle).transform);
+            const currentX = currentMatrix.m41;
+
+            if (currentX >= maxSlide * 0.9) {
+                // 觸發撥號
+                handle.style.transform = `translateX(${maxSlide}px)`;
+                window.location.href = `tel:${phone}`;
+                setTimeout(() => {
+                    resetSlider();
+                }, 1000);
+            } else {
+                resetSlider();
+            }
+        }
+
+        function resetSlider() {
+            handle.style.transition = 'transform 0.3s ease-out';
+            handle.style.transform = 'translateX(0px)';
+        }
+
+        handle.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove', moveDrag);
+        window.addEventListener('mouseup', endDrag);
+
+        handle.addEventListener('touchstart', startDrag);
+        window.addEventListener('touchmove', moveDrag);
+        window.addEventListener('touchend', endDrag);
+    </script>
+</body>
+</html>
