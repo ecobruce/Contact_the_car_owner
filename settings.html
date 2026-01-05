@@ -76,7 +76,7 @@
     // 初始化輸入框內容 (讀取現有設定或顯示預設值)
     document.getElementById('ownerName').value = localStorage.getItem('ownerName') || '陳先生';
     document.getElementById('ownerPlate').value = localStorage.getItem('ownerPlate') || 'BZP-3757';
-    document.getElementById('ownerPhone').value = localStorage.getItem('ownerPhone') || '0922896785';
+    document.getElementById('ownerPhone').value = localStorage.getItem('ownerPhone') || '0987654321';
 
     function saveSettings() {
         const name = document.getElementById('ownerName').value;
@@ -93,4 +93,5 @@
 </script>
 
 </body>
+
 </html>
